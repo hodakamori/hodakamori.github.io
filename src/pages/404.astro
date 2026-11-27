@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import { withBase } from '../lib/site';
+---
+
+<Base title="Page not found">
+  <!--
+    megane's docs and demo used to live at hodakamori.github.io/megane/ before the
+    repository moved to megane-labs/megane. GitHub Pages serves this page for those
+    old URLs, so forward them (path, query and #hash kept) to the new site.
+    Keep this site free of its own /megane/ route, or the redirect stops firing.
+  -->
+  <script is:inline slot="head">
+    (function () {
+      var l = window.location;
+      if (/^\/megane(\/|$)/.test(l.pathname)) {
+        l.replace('https://megane-labs.github.io' + l.pathname + l.search + l.hash);
+      }
+    })();
+  </script>
+  <meta name="robots" content="noindex" slot="head" />
+
+  <h1 class="page-title">Page not found</h1>
+  <p class="page-lead">
+    The page you were looking for doesn't exist. <a href={withBase('/')}>Back to the home page</a>.
+  </p>
+  <p>
+    Looking for megane? It now lives at
+    <a href="https://megane-labs.github.io/megane/">megane-labs.github.io/megane</a>.
+  </p>
+</Base>
