@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import T from '../components/T.astro';
+import PubItem from '../components/PubItem.astro';
+import Services from '../components/Services.astro';
+import ContactButton from '../components/ContactButton.astro';
+import { business, profile } from '../data/profile';
+import { publications } from '../data/publications';
+import { formatDate, getPosts, withBase } from '../lib/site';
+
+const selected = publications.filter((p) => p.selected).slice(0, 4);
+const posts = (await getPosts()).slice(0, 3);
+---
+
+<Base>
+  <section>
+    <div class="sec-head"><h2>About</h2></div>
+    <T as="p" class="lead" v={profile.bio[0]} />
+    {profile.bio.slice(1).map((p) => <T as="p" v={p} />)}
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Research</h2></div>
+    <div class="res">
+      {
+        profile.research.map((r) => (
+          <div class="rcard">
+            <h3>{r.title}</h3>
+            <p>{r.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Work with me</h2><a href={withBase('/work/')}>Services →</a></div>
+    <T as="p" class="sec-lead" v={business.pitch} />
+    <Services />
+    <div class="cta-band">
+      <p>Have a project in mind?</p>
+      <ContactButton />
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Selected publications</h2><a href={withBase('/publications/')}>All publications →</a></div>
+    {selected.map((p) => <PubItem pub={p} showYear />)}
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section>
+        <div class="sec-head">
+          <h2>Latest posts</h2>
+          <a href={withBase('/blog/')}>All posts →</a>
+        </div>
+        <ul class="posts">
+          {posts.map((post) => (
+            <li>
+              <a href={withBase(`/blog/${post.id}/`)}>
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <span class="title">{post.data.title}</span>
+                <span class="desc">{post.data.description}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</Base>

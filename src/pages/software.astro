@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import SoftwareItem from '../components/SoftwareItem.astro';
+import { software } from '../data/software';
+import { profile } from '../data/profile';
+---
+
+<Base title="Software" description={`Open-source software by ${profile.name}.`}>
+  <h1 class="page-title">Software</h1>
+  <p class="page-lead">Open-source tools I created for molecular visualization and interactive simulation.</p>
+  {software.map((item) => <SoftwareItem item={item} detailed />)}
+</Base>

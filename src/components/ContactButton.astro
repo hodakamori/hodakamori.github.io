@@ -1,0 +1,21 @@
+---
+import { business } from '../data/profile';
+
+interface Props {
+  label?: string;
+  class?: string;
+}
+const { label = 'Get in touch', class: className = 'btn-solid' } = Astro.props;
+---
+
+{
+  business.email ? (
+    <a class={className} href={`mailto:${business.email}`}>
+      {label}
+    </a>
+  ) : (
+    <span class:list={[className, 'is-todo']} title="Set business.email in src/data/profile.ts">
+      {label}
+    </span>
+  )
+}

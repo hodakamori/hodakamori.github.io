@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import type { Software } from '../data/software';
+
+interface Props {
+  item: Software;
+  /** Larger thumbnail plus highlights, tags and licence (Software page). */
+  detailed?: boolean;
+  /** Short label shown after the name instead of the tagline. */
+  label?: string;
+  /** Hide the link buttons (e.g. on the Work with me page). */
+  links?: boolean;
+}
+const { item, detailed = false, label, links = true } = Astro.props;
+---
+
+<article class:list={['sw', { lg: detailed }]}>
+  <div class="thumb">
+    {
+      item.image ? (
+        <Image
+          src={item.image}
+          alt={item.imageAlt ?? ''}
+          widths={[240, 480, 720]}
+          sizes={detailed ? '(max-width: 900px) 112px, 248px' : '(max-width: 900px) 112px, 176px'}
+          style={item.imagePosition ? `object-position:${item.imagePosition}` : undefined}
+        />
+      ) : (
+        <Icon name="hexagon" class="thumb-icon" />
+      )
+    }
+  </div>
+  <div>
+    <h3 class="sn">{item.name}<span>{label ?? item.tagline}</span></h3>
+    <p class="sd">{item.description}</p>
+    {
+      detailed && item.highlights && (
+        <ul class="hl">
+          {item.highlights.map((h) => (
+            <li>{h}</li>
+          ))}
+        </ul>
+      )
+    }
+    {
+      detailed && (
+        <div class="tags">
+          {item.tags.map((t) => (
+            <span>{t}</span>
+          ))}
+          <span>{item.license}</span>
+        </div>
+      )
+    }
+    {
+      links && (
+        <div class="btns">
+          {item.links.map((l) => (
+            <a href={l.href}>{l.label}</a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</article>

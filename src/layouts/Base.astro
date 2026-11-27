@@ -1,0 +1,124 @@
+---
+import '../styles/global.css';
+import { Image } from 'astro:assets';
+import Icon from '../components/Icon.astro';
+import T from '../components/T.astro';
+import { business, profile } from '../data/profile';
+import { getPosts, withBase } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = profile.bio[0] } = Astro.props;
+const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
+
+const posts = await getPosts();
+const nav = [
+  { href: '/publications/', label: 'Publications' },
+  { href: '/software/', label: 'Software' },
+  { href: '/cv/', label: 'CV' },
+  ...(posts.length > 0 ? [{ href: '/blog/', label: 'Blog' }] : []),
+];
+const current = Astro.url.pathname;
+const isActive = (href: string) => current.startsWith(withBase(href));
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter+Tight:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header class="top">
+      <div class="container">
+        <a class="brand" href={withBase('/')}>{profile.name}</a>
+        <nav aria-label="Main">
+          {
+            nav.map((item) => (
+              <a href={withBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+          <a class="cta-btn" href={withBase('/work/')} aria-current={isActive('/work/') ? 'page' : undefined}>
+            Work with me
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container layout">
+      <aside class="sidebar" aria-label="Profile">
+        <div class="photo" aria-hidden={profile.photo ? undefined : 'true'}>
+          {
+            profile.photo ? (
+              <Image src={profile.photo} alt={profile.name} widths={[192, 336]} sizes="168px" />
+            ) : (
+              profile.initials
+            )
+          }
+        </div>
+        <p class="name">{profile.name}</p>
+        <T as="p" class="position" v={profile.position} />
+        <p class="affil"><T v={profile.department} /><br /><T v={profile.university} /></p>
+        <ul class="ilinks">
+          {
+            profile.links.map((l) => (
+              <li>
+                <Icon name={l.icon} />
+                {l.href ? <a href={l.href}>{l.label}</a> : <span class="todo">{l.label}</span>}
+              </li>
+            ))
+          }
+          <li>
+            <Icon name="pin" />
+            <T v={profile.location} />
+          </li>
+        </ul>
+        {
+          business.available && (
+            <div class="avail">
+              <p>
+                <span class="dot" aria-hidden="true" />
+                <b>Available for projects</b>
+                <br />
+                <T v={business.summary} />
+              </p>
+              <a class="avail-btn" href={withBase('/work/')}>
+                Work with me →
+              </a>
+            </div>
+          )
+        }
+      </aside>
+
+      <main class="content" id="content">
+        <slot />
+      </main>
+    </div>
+
+    <footer>
+      <div class="container">© {year} {profile.name}</div>
+    </footer>
+  </body>
+</html>

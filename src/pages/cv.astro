@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import T from '../components/T.astro';
+import { cv, type CvEntry } from '../data/cv';
+import { profile } from '../data/profile';
+import { publications } from '../data/publications';
+import { withBase } from '../lib/site';
+
+const talks: CvEntry[] = publications
+  .filter((p) => p.type === 'talk' && p.note === 'Invited')
+  .map((p) => ({ period: String(p.year), title: p.title, detail: p.venue }));
+
+const sections: { title: string; entries: CvEntry[] }[] = [
+  { title: 'Positions', entries: cv.positions },
+  { title: 'Education', entries: cv.education },
+  { title: 'Awards & grants', entries: cv.awards },
+  { title: 'Invited talks', entries: talks },
+].filter((s) => s.entries.length > 0);
+---
+
+<Base title="CV" description={`Curriculum vitae of ${profile.name}.`}>
+  <div class="cv-top">
+    <div>
+      <h1 class="page-title">Curriculum Vitae</h1>
+      <p class="page-lead">Last updated {cv.updated}.</p>
+    </div>
+    {
+      cv.pdf ? (
+        <a class="btn-solid" href={withBase(cv.pdf)}>
+          <Icon name="download" />
+          Download PDF
+        </a>
+      ) : (
+        <span class="btn-solid is-todo" title="Set cv.pdf in src/data/cv.ts">
+          <Icon name="download" />
+          Download PDF
+        </span>
+      )
+    }
+  </div>
+
+  {
+    sections.map((s) => (
+      <section>
+        <div class="sec-head">
+          <h2>{s.title}</h2>
+        </div>
+        {s.entries.map((e) => (
+          <div class="cvrow">
+            <T v={e.period} class="when" />
+            <div class="what">
+              <T v={e.title} as="b" />
+              {e.detail && <T v={e.detail} />}
+            </div>
+          </div>
+        ))}
+      </section>
+    ))
+  }
+
+  <section>
+    <div class="sec-head"><h2>Skills</h2></div>
+    <dl class="skills">
+      {
+        cv.skills.map((s) => (
+          <>
+            <dt>{s.area}</dt>
+            <dd>{s.items}</dd>
+          </>
+        ))
+      }
+    </dl>
+  </section>
+</Base>

@@ -1,0 +1,14 @@
+---
+// Renders text; "[...]" placeholders (whole or mid-sentence) are shown greyed out until filled in.
+import { splitTodo } from '../lib/site';
+
+interface Props {
+  v: string | number;
+  as?: 'span' | 'p' | 'div' | 'b';
+  class?: string;
+}
+const { v, as: Tag = 'span', class: className } = Astro.props;
+const parts = splitTodo(v);
+---
+
+<Tag class={className}>{parts.map((p) => (p.todo ? <span class="todo">{p.text}</span> : p.text))}</Tag>

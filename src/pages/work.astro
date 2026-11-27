@@ -1,0 +1,50 @@
+---
+import Base from '../layouts/Base.astro';
+import T from '../components/T.astro';
+import Services from '../components/Services.astro';
+import SoftwareItem from '../components/SoftwareItem.astro';
+import ContactButton from '../components/ContactButton.astro';
+import { business, profile } from '../data/profile';
+import { software } from '../data/software';
+
+const work = software.filter((s) => s.image);
+---
+
+<Base title="Work with me" description={`Scientific software and molecular simulation projects with ${profile.name}.`}>
+  <h1 class="page-title">Work with me</h1>
+  <T as="p" class="page-lead" v={business.intro} />
+
+  <section>
+    <div class="sec-head"><h2>Services</h2></div>
+    <Services />
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Selected work</h2></div>
+    {work.map((item) => <SoftwareItem item={item} links={false} />)}
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>How it works</h2></div>
+    <ol class="steps">
+      {
+        business.steps.map((s) => (
+          <li>
+            <b>{s.title}</b>
+            <span>{s.text}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <div class="cta-band big">
+    <div>
+      <p>Interested?</p>
+      <span class="sub">
+        {business.email ? business.email : <span class="todo">Email</span>} · <T v={business.name} />
+      </span>
+    </div>
+    <ContactButton />
+  </div>
+</Base>

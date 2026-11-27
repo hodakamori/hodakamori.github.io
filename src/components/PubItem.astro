@@ -1,0 +1,45 @@
+---
+import T from './T.astro';
+import { me, typeLabels, type Publication } from '../data/publications';
+import { isTodo } from '../lib/site';
+
+interface Props {
+  pub: Publication;
+  /** Show the year in a right-hand column (lists that are not grouped by year). */
+  showYear?: boolean;
+}
+const { pub, showYear = false } = Astro.props;
+const href = pub.links?.[0]?.href;
+---
+
+<article class:list={['pub', { 'with-year': showYear }]} data-type={pub.type}>
+  <div>
+    <div class="pt">
+      {href && !isTodo(pub.title) ? <a href={href}>{pub.title}</a> : <T v={pub.title} />}
+    </div>
+    <div class="pa">
+      {
+        pub.authors.map((author, i) => (
+          <>
+            {i > 0 && ', '}
+            {author === me ? <b>{author}</b> : <T v={author} />}
+          </>
+        ))
+      }
+    </div>
+    <div class="pv">
+      <T v={pub.venue} />
+      <span class="badge">{pub.note ? `${pub.note} ${typeLabels[pub.type].toLowerCase()}` : typeLabels[pub.type]}</span>
+    </div>
+    {
+      pub.links && pub.links.length > 0 && (
+        <div class="btns">
+          {pub.links.map((l) => (
+            <a href={l.href}>{l.label}</a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+  {showYear && <T v={pub.year} class="yr" />}
+</article>

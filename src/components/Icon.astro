@@ -1,0 +1,44 @@
+---
+interface Props {
+  name: string;
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+
+// 24x24 stroke icons (GitHub is a filled mark).
+const paths: Record<string, string> = {
+  github:
+    '<path fill="currentColor" stroke="none" d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/>',
+  scholar: '<path d="M12 4 2 9.5 12 15l10-5.5z"/><path d="M6 12v4.5c0 1.6 2.7 3 6 3s6-1.4 6-3V12"/>',
+  orcid: '<circle cx="12" cy="12" r="10"/><path d="M8.5 9v7.5M8.5 6.6v.2M11.5 9h2a3.75 3.75 0 0 1 0 7.5h-2z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  external: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  doc: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>',
+  code: '<path d="m8 8-5 4 5 4M16 8l5 4-5 4M13.5 5l-3 14"/>',
+  book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19.5V5.5"/>',
+  package: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  atom: '<circle cx="12" cy="12" r="1.8" fill="currentColor"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>',
+  hexagon: '<path d="M7.5 3.5h9l4.5 8.5-4.5 8.5h-9L3 12z"/><path d="M9 6.5h6l3 5.5-3 5.5H9L6 12z" opacity=".5"/>',
+};
+
+const iconFor = (label: string) =>
+  ({ GitHub: 'github', Code: 'code', Docs: 'book', PyPI: 'package', npm: 'package', DOI: 'doc', PDF: 'doc', arXiv: 'doc' })[label];
+
+const key = paths[name] ? name : (iconFor(name) ?? 'external');
+---
+
+<svg
+  class={className}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.7"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={paths[key]}
+/>
